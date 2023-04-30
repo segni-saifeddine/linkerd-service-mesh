@@ -26,10 +26,12 @@ Linkerd’s telemetry and monitoring features function automatically, without re
 * Recording of TCP-level metrics (bytes in/out, etc) for other TCP traffic
 * Reporting metrics per service, per caller/callee pair, or per route/path
 * Generating topology graphs that display the runtime relationship between services.
-The viz extension installs the following components into your linkerd-viz namespace:
+
+> The viz extension installs the following components into your linkerd-viz namespace:
 * A Prometheus instance
 * metrics-api, tap, tap-injector, and web components
-> These components work together to provide an on-cluster metrics stack.
+
+These components work together to provide an on-cluster metrics stack.
 
 - ***Service mesh reliability***
 When a pod is deployed, the application running in it may or may not be working as expected ,if the application isn't running as expected, users cannot access it, engineers must drop what they're doing and troubleshoot the application.The service mesh load balancer helps to route traffic to healthy instances
@@ -122,7 +124,8 @@ $ linkerd install --crds | kubectl apply -f -   # install the Linkerd CRDs
 $ linkerd install | kubectl apply -f -          # install the control plane into the 'linkerd' namespace
 ```
 > The install --crds command installs Linkerd’s Custom Resource Definitions (CRDs), which must be installed first, while the install command installs the Linkerd control plane.
-- It may take a minute or two for the control plane to finish installing. Wait for the control plane to be ready (and verify your installation) by running:
+
+It may take a minute or two for the control plane to finish installing. Wait for the control plane to be ready (and verify your installation) by running:
 
 ```
 $ linkerd check
@@ -146,9 +149,9 @@ Status check results are √
 ```
 ## Demo App
 
-- Congratulations, Linkerd is installed! However, it’s not doing anything just yet. To see Linkerd in action, we’re going to need an application.
+Congratulations, Linkerd is installed! However, it’s not doing anything just yet. To see Linkerd in action, we’re going to need an application.
 We will use an application called " Emojivoto" , it uses a mix of gRPC and HTTP calls to allow the user to vote on their favorite emojis.
-* First let's connect to our Kubernetes cluster (We will use an aks cluster in thid demostration)
+1- First let's connect to our Kubernetes cluster (We will use an aks cluster in thid demostration)
 ```
  $ az aks get-credentials --resource-group Saif-aks-lab  --name my-aks-cluster
  $ kubectl get nodes
@@ -157,16 +160,16 @@ We will use an application called " Emojivoto" , it uses a mix of gRPC and HTTP 
    aks-agentpool-63985312-vmss000001   Ready    agent   2m19s   v1.24.9
    aks-agentpool-63985312-vmss000002   Ready    agent   2m19s   v1.24.9
 ```
-* Create an namespace for the demo application :
+2- Create an namespace for the demo application :
 ```
 $ kubectl create namespace emojivoto
 ```
-* Then we will deploy four applications: emoji , vote-bot ,  voting and web , then create the services to expose this applications, finally create three ServiceAccount : emoji , voting and web
+3- Then we will deploy four applications: emoji , vote-bot ,  voting and web , then create the services to expose this applications, finally create three ServiceAccount : emoji , voting and web
 - You can clone the application git repos from here  : https://github.com/linkerd/website/blob/main/run.linkerd.io/public/emojivoto.yml
 
 [![emoji-app](doc-images/app-archi.PNG)](doc-images/app-archi.PNG)
 
-- Check the differnts created resources:
+Check the differnts created resources:
 ```
 $ kubectl get serviceaccount -n emojivoto
   NAME      SECRETS   AGE
@@ -184,26 +187,27 @@ $ kubectl get  service -n emojivoto
 ```
 ```
 $ kubectl get po -n emojivoto
-NAME                        READY   STATUS    RESTARTS   AGE
-emoji-78594cb998-c5tgm      1/1     Running   0          21s
-vote-bot-786d75cf45-jvvlv   1/1     Running   0          21s
-voting-5f5b555dff-vrncv     1/1     Running   0          21s
-web-68cc8bc689-f457p        1/1     Running   0          20s
+  NAME                        READY   STATUS    RESTARTS   AGE
+  emoji-78594cb998-c5tgm      1/1     Running   0          21s
+  vote-bot-786d75cf45-jvvlv   1/1     Running   0          21s
+  voting-5f5b555dff-vrncv     1/1     Running   0          21s
+  web-68cc8bc689-f457p        1/1     Running   0          20s
 ```
-* Forward web-svc locally to port 8080 to take a look at Emojivoto in its natural state
+4- Forward web-svc locally to port 8080 to take a look at Emojivoto in its natural state
 ```
 $ kubectl -n emojivoto port-forward svc/web-svc 8080:80
 ```
 
-* Once deployed, you’ll need a way to get the Linkerd sidecar into the application Namespace. The easiest way in this instance is to inject the sidecar into every containerized deployment via the inject command.
+5- Once deployed, you’ll need a way to get the Linkerd sidecar into the application Namespace. The easiest way in this instance is to inject the sidecar into every containerized deployment via the inject command.
 ```
 $ kubectl get -n emojivoto deploy -o yaml \
   | linkerd inject - \
   | kubectl apply -f -
 ```
-* Visit again the application at http://localhost:8080 ,We’ve added Linkerd to Emojivoto, but there are no visible changes to the application! That is part of Linkerd’s design—it does its best not to interfere with a functioning application.
+ Visit again the application at http://localhost:8080 ,We’ve added Linkerd to Emojivoto, but there are no visible changes to the application! That is part of Linkerd’s design—it does its best not to interfere with a functioning application.
 
-* To take a closer look at what Linkerd is actually doing we need to add the linkerd viz extension :
+6- To take a closer look at what Linkerd is actually doing we need to add the linkerd viz extension :
+
 ```
 $ linkerd viz install | kubectl apply -f -
 ```
@@ -213,14 +217,16 @@ The final step is to view the microservice that you deployed in the application 
 $ linkerd viz dashboard &
 ```
 > The Viz dashboard will automatically open up for you. Change the Namespace to the emojivoto Namespace and you’ll now see that the containerized applications running in the emojivotoNamespace are secured with Linkerd.
+
 [![linkerd-UI](doc-images/linkerd-UI.PNG)](doc-images/linkerd-UI.PNG)
 
-- Click tothe pods button , You cannow see the HTTP and TCP metrics of each  pods
+Click to the pods button , You cannow see the HTTP and TCP metrics of each  pods
+
 [![Pod-HTTP-TCP](doc-images/Pod-HTTP-TCP.PNG)](doc-images/Pod-HTTP-TCP.PNG)
 
 ## That’s it! 👏
 
-- Congratulations, you have joined the exalted ranks of Linkerd users! Give yourself a pat on the back.I appreciate you reading. 🙏
+Congratulations, you have joined the exalted ranks of Linkerd users! Give yourself a pat on the back.I appreciate you reading. 🙏
  What’s next? Here are some usufuel references :
 - https://linkerd.io/
 - https://www.redhat.com/en/topics/microservices/what-is-a-service-mesh

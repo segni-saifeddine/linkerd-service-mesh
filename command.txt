@@ -1,9 +1,0 @@
-https://linkerd.io/2.13/getting-started/
-
-https://buoyant.io/blog/introduction-to-the-linkerd-service-mesh
-
-https://training.linuxfoundation.org/training/introduction-to-service-mesh-with-linkerd-lfs143/
-
-https://picluster.ricsanfre.com/docs/service-mesh/
-
-https://linkerd.io/2.12/reference/architecture/
