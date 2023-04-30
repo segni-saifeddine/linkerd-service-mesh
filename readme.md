@@ -14,6 +14,8 @@ This manual will show you step-by-step how to deploy Linkerd in your Kubernetes 
 If you are building applications on Kubernetes, then a service mesh like Linkerd provides critical observability, reliability, and security features.
 Linkerd offer this features with on big advantages : the application doesn’t need to implement these features, or even to be aware that the service mesh is there!
 
+[![very-interesting](doc-images/very-interesting.jpg)](doc-images/very-interesting.jpg)
+
 - ***Service mesh security*** :
 By default, all pods and services send fully unencrypted packets between other pods and services , A service mesh solves this with mTLS.
 Linkerd automatically enables mutually-authenticated Transport Layer Security (mTLS) for all TCP traffic between meshed pods. This means that Linkerd adds authenticated, encrypted communication to your application with no extra work on your part.With a service mesh, you're protected inside the pod network !
@@ -37,7 +39,6 @@ These components work together to provide an on-cluster metrics stack.
 When a pod is deployed, the application running in it may or may not be working as expected ,if the application isn't running as expected, users cannot access it, engineers must drop what they're doing and troubleshoot the application.The service mesh load balancer helps to route traffic to healthy instances
 Linkerd uses an algorithm called EWMA, or exponentially weighted moving average, to automatically send requests to the fastest endpoints. This load balancing can improve end-to-end latencies.
 
-[![very-ncie](doc-images/very-nice-meme.png)](doc-images/very-nice-meme.png)
 ## Linkerd components
 At a high level, Linkerd consists of a control plane and a data plane.
 
