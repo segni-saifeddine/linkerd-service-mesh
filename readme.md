@@ -1,4 +1,4 @@
-# Introduction to Linkerd Service Meshes:
+# Introduction to Linkerd Service Mesh
 [![Linkerd-logo](doc-images/linkerd.jpg)](doc-images/linkerd.jpg)
 
 ## What is Sevice Mesh ?
