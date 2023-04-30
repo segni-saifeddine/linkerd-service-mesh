@@ -67,6 +67,10 @@ We will need to download the linkerd CLI onto your local machine. The CLI will a
 ```
 $ curl --proto '=https' --tlsv1.2 -sSfL https://run.linkerd.io/install | sh
 ```
+Add the linkerd CLI to your path with:
+```
+$ export PATH=$PATH:/root/.linkerd2/bin
+```
 Once installed, verify the CLI is running correctly with:
 ```
 $ linkerd version
@@ -75,6 +79,35 @@ $ linkerd version
 Before we can install the Linkerd control plane, we need to check and validate that everything is configured correctly
 ```
 $ linkerd check --pre
+kubernetes-api
+--------------
+√ can initialize the client
+√ can query the Kubernetes API
+
+kubernetes-version
+------------------
+√ is running the minimum Kubernetes API version
+
+pre-kubernetes-setup
+--------------------
+√ control plane namespace does not already exist
+√ can create non-namespaced resources
+√ can create ServiceAccounts
+√ can create Services
+√ can create Deployments
+√ can create CronJobs
+√ can create ConfigMaps
+√ can create Secrets
+√ can read Secrets
+√ can read extension-apiserver-authentication configmap
+√ no clock skew detected
+
+linkerd-version
+---------------
+√ can determine the latest version
+√ cli is up-to-date
+
+Status check results are √
 ```
 3- Install Linkerd onto your cluster
  it’s time to install Linkerd on your Kubernetes cluster , here are two methods:
@@ -84,28 +117,79 @@ $ linkerd check --pre
 
 We’ll demonstrate using Cli ,To do this, run:
 
-```$ linkerd install --crds | kubectl apply -f -
-$ linkerd install | kubectl apply -f -
+```
+$ linkerd install --crds | kubectl apply -f -   # install the Linkerd CRDs
+$ linkerd install | kubectl apply -f -          # install the control plane into the 'linkerd' namespace
 ```
 > The install --crds command installs Linkerd’s Custom Resource Definitions (CRDs), which must be installed first, while the install command installs the Linkerd control plane.
 - It may take a minute or two for the control plane to finish installing. Wait for the control plane to be ready (and verify your installation) by running:
 
 ```
 $ linkerd check
+kubernetes-api
+--------------
+√ can initialize the client
+√ can query the Kubernetes API
+
+kubernetes-version
+------------------
+√ is running the minimum Kubernetes API version
+
+linkerd-existence
+-----------------
+√ 'linkerd-config' config map exists
+.
+.
+.
+.
+Status check results are √
 ```
 ## Demo App
+
 - Congratulations, Linkerd is installed! However, it’s not doing anything just yet. To see Linkerd in action, we’re going to need an application.
 We will use an application called " Emojivoto" , it uses a mix of gRPC and HTTP calls to allow the user to vote on their favorite emojis.
-* First let's cone the application repos
-
+* First let's connect to our Kubernetes cluster (We will use an aks cluster in thid demostration)
+```
+ $ az aks get-credentials --resource-group Saif-aks-lab  --name my-aks-cluster
+ $ kubectl get nodes
+   NAME                                STATUS   ROLES   AGE     VERSION
+   aks-agentpool-63985312-vmss000000   Ready    agent   2m12s   v1.24.9
+   aks-agentpool-63985312-vmss000001   Ready    agent   2m19s   v1.24.9
+   aks-agentpool-63985312-vmss000002   Ready    agent   2m19s   v1.24.9
+```
 * Create an namespace for the demo application :
 ```
-$ Kubectl create ns emojivoto
+$ kubectl create namespace emojivoto
 ```
 * Then we will deploy four applications: emoji , vote-bot ,  voting and web , then create the services to expose this applications, finally create three ServiceAccount : emoji , voting and web
+- You can clone the application git repos from here  : https://github.com/linkerd/website/blob/main/run.linkerd.io/public/emojivoto.yml
 
 [![emoji-app](doc-images/app-archi.PNG)](doc-images/app-archi.PNG)
 
+- Check the differnts created resources:
+```
+$ kubectl get serviceaccount -n emojivoto
+  NAME      SECRETS   AGE
+  default   0         63s
+  emoji     0         29s
+  voting    0         28s
+  web       0         28s
+```
+```
+$ kubectl get  service -n emojivoto
+  NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE
+  emoji-svc    ClusterIP   10.0.241.38    <none>        8080/TCP,8801/TCP   15s
+  voting-svc   ClusterIP   10.0.113.204   <none>        8080/TCP,8801/TCP   15s
+  web-svc      ClusterIP   10.0.95.131    <none>        80/TCP              15s
+```
+```
+$ kubectl get po -n emojivoto
+NAME                        READY   STATUS    RESTARTS   AGE
+emoji-78594cb998-c5tgm      1/1     Running   0          21s
+vote-bot-786d75cf45-jvvlv   1/1     Running   0          21s
+voting-5f5b555dff-vrncv     1/1     Running   0          21s
+web-68cc8bc689-f457p        1/1     Running   0          20s
+```
 * Forward web-svc locally to port 8080 to take a look at Emojivoto in its natural state
 ```
 $ kubectl -n emojivoto port-forward svc/web-svc 8080:80
@@ -129,13 +213,15 @@ The final step is to view the microservice that you deployed in the application 
 $ linkerd viz dashboard &
 ```
 > The Viz dashboard will automatically open up for you. Change the Namespace to the emojivoto Namespace and you’ll now see that the containerized applications running in the emojivotoNamespace are secured with Linkerd.
+[![linkerd-UI](doc-images/linkerd-UI.PNG)](doc-images/linkerd-UI.PNG)
 
-## Debug the emojivoto app by using Linkerd
+- Click tothe pods button , You cannow see the HTTP and TCP metrics of each  pods
+[![Pod-HTTP-TCP](doc-images/Pod-HTTP-TCP.PNG)](doc-images/Pod-HTTP-TCP.PNG)
 
 ## That’s it! 👏
 
 - Congratulations, you have joined the exalted ranks of Linkerd users! Give yourself a pat on the back.I appreciate you reading. 🙏
-What’s next? Here are some usufuel references :
+ What’s next? Here are some usufuel references :
 - https://linkerd.io/
 - https://www.redhat.com/en/topics/microservices/what-is-a-service-mesh
 - https://training.linuxfoundation.org/training/introduction-to-service-mesh-with-linkerd-lfs143/
