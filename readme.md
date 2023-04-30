@@ -4,14 +4,16 @@
 ## What is Sevice Mesh ?
 
 A service mesh is a tool for adding observability, security, and reliability features to “cloud native” applications by transparently inserting this functionality at the platform layer rather than the application layer.
- The service mesh is rapidly becoming a standard part of the cloud native stack, especially for Kubernetes adopters
-Service mesh allows you to separate the business logic of the application from observability, and network and security policies. It allows you to connect, secure, and monitor your microservices.
+The service mesh is typically implemented as a scalable set of network proxies deployed alongside application code (a pattern sometimes called a sidecar). These proxies handle the communication between the microservices and also act as a point at which the service mesh features can be introduced.Service mesh allows you to separate the business logic of the application from observability, and network and security policies. It allows you to connect, secure, and monitor your microservices.
+The service mesh is rapidly becoming a standard part of the cloud native stack, especially for Kubernetes adopters.
+Linkerd is a service mesh for Kubernetes.Linkerd.Linkerd is a Cloud Native Computing Foundation-graduated project that is totally open source and licensed under Apache v2.
 
-Linkerd is a service mesh for Kubernetes.Linkerd is fully open source, licensed under Apache v2, and is a Cloud Native Computing Foundation graduated project.
-
-In this guide, we’ll walk you through how to install Linkerd into your Kubernetes cluster. Then we’ll deploy a sample application to show off what Linkerd can do.
+This manual will show you step-by-step how to deploy Linkerd in your Kubernetes cluster. Next, we'll launch a demonstration application.
 
 ## Why Use a Service Mesh?
+If you are building applications on Kubernetes, then a service mesh like Linkerd provides critical observability, reliability, and security features.
+Linkerd offer this features with on big advantages : the application doesn’t need to implement these features, or even to be aware that the service mesh is there!
+[![very-ncie](doc-images/very-nice-meme.png)](doc-images/very-nice-meme.png)
 
 ## Linkerd components
 At a high level, Linkerd consists of a control plane and a data plane.
@@ -110,7 +112,7 @@ $ linkerd viz dashboard &
 
 ## That’s it! 👏
 
-- Congratulations, you have joined the exalted ranks of Linkerd users! Give yourself a pat on the back.thanks for reading 🙏
+- Congratulations, you have joined the exalted ranks of Linkerd users! Give yourself a pat on the back.I appreciate you reading. 🙏
 What’s next? Here are some usufuel references :
 - https://linkerd.io/
 - https://www.redhat.com/en/topics/microservices/what-is-a-service-mesh
